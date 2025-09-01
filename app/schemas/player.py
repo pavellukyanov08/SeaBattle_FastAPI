@@ -17,7 +17,7 @@ class PlayerRead(BaseModel):
 
 
 class PlayerResponse(BaseModel):
-    username: str
+    name: str
 
     model_config = {
         "from_attributes": True
