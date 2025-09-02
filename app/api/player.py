@@ -1,17 +1,18 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional, List
 
 from app.models.models import Player
 from app.schemas.player import PlayerRead
-from app.core.database import get_session, AsyncSessionLocal
+from app.core.database import get_session
 
 
 router = APIRouter()
 
 
 @router.get("/players", response_model=List[PlayerRead])
-async def get_players(player: Optional[str] = None, db: AsyncSessionLocal = Depends(get_session)):
+async def get_players(player: Optional[str] = None, db: AsyncSession = Depends(get_session)):
     stmt = select(Player).where(Player.is_playing == False)
 
     if player is not None:

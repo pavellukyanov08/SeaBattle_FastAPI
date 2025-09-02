@@ -33,6 +33,7 @@ class Game(Base):
     status = Column(Enum(GameStatus), default=GameStatus.waiting)
     winner_id = Column(UUID(as_uuid=True), ForeignKey("players.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    finished_at = Column(DateTime(timezone=True), server_default=func.now())
 
     player1 = relationship("Player", foreign_keys=[player1_id])
     player2 = relationship("Player", foreign_keys=[player2_id])

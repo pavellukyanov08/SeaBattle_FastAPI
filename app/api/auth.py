@@ -4,7 +4,9 @@ from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends
 from starlette.status import HTTP_409_CONFLICT, HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
-from app.core.database import Base, AsyncSessionLocal, get_session
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import get_session
 from app.models.models import Player
 from app.schemas.auth import Token
 from app.schemas.player import PlayerRegister, PlayerResponse
@@ -14,7 +16,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 router = APIRouter()
 
 @router.post("/players/register", response_model=PlayerResponse)
-async def register(user_data: PlayerRegister, db: AsyncSessionLocal = Depends(get_session)):
+async def register(user_data: PlayerRegister, db: AsyncSession = Depends(get_session)):
     existing_user = await get_user(db, user_data.username)
     if existing_user:
        raise HTTPException(status_code=HTTP_409_CONFLICT, detail="Такой пользователь уже зарегистрирован")
@@ -37,7 +39,7 @@ async def register(user_data: PlayerRegister, db: AsyncSessionLocal = Depends(ge
 
 
 @router.post('/players/login', response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessionLocal = Depends(get_session)):
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_session)):
     existing_user = await authenticate_user(db, form_data.username, form_data.password)
     if not existing_user:
         raise HTTPException(
