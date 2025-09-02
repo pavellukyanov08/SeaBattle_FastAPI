@@ -17,6 +17,12 @@ router = APIRouter()
 
 @router.post("/players/register", response_model=PlayerResponse)
 async def register(user_data: PlayerRegister, db: AsyncSession = Depends(get_session)):
+    """
+    Регистрирует пользователя в системе
+    :param user_data: пользовательские данные (имя пользователя и пароль)
+    :param db:
+    :return:
+    """
     existing_user = await get_user(db, user_data.username)
     if existing_user:
        raise HTTPException(status_code=HTTP_409_CONFLICT, detail="Такой пользователь уже зарегистрирован")
@@ -40,6 +46,12 @@ async def register(user_data: PlayerRegister, db: AsyncSession = Depends(get_ses
 
 @router.post('/players/login', response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_session)):
+    """
+    Авторизация пользователя в системе
+    :param form_data: форма с пользовательскими данными
+    :param db:
+    :return:
+    """
     existing_user = await authenticate_user(db, form_data.username, form_data.password)
     if not existing_user:
         raise HTTPException(

@@ -22,6 +22,12 @@ games: Dict[str, dict] = {}
 
 @router.get("/games", response_model=List[GameRead])
 async def get_games(game: Optional[str] = None, db: AsyncSession = Depends(get_session)):
+    """
+    Возвращает данные по всем играм или по одной игре
+    :param game: uuid игры
+    :param db:
+    :return:
+    """
     stmt = select(Game).where(Game.status == 'playing')
 
     if game is not None:
@@ -40,6 +46,12 @@ async def get_games(game: Optional[str] = None, db: AsyncSession = Depends(get_s
 
 @router.post("/game/create", response_model=GameResponse)
 async def create_game(game: GameCreate, db: AsyncSession = Depends(get_session)):
+    """
+    Создание игры
+    :param game:
+    :param db:
+    :return:
+    """
     # player1 = select(Player).where(Player.id == game.player1_id)
     # player2 = select(Player).where(Player.id == game.player2_id)
 
@@ -73,6 +85,12 @@ async def create_game(game: GameCreate, db: AsyncSession = Depends(get_session))
 
 
 async def finish_game(game_id: str, winner_id: str | None):
+    """
+    Завершение игры
+    :param game_id: uuid игры
+    :param winner_id: uuid победителя
+    :return:
+    """
     async with AsyncSession() as session:
         try:
             stmt = update(Game).where(
@@ -328,6 +346,12 @@ async def websocket_game(websocket: WebSocket, game_id: str):
 
 @router.get("/players/{player_id}/stats")
 async def get_players_stats(player_id: str, db: AsyncSession = Depends(get_session)):
+    """
+    Возвращает статистику пользователя
+    :param player_id:
+    :param db:
+    :return:
+    """
     player = await db.get(Player, player_id)
     if not player:
         raise HTTPException(status_code=404, detail="Игрока не найден")

@@ -13,6 +13,12 @@ router = APIRouter()
 
 @router.get("/players", response_model=List[PlayerRead])
 async def get_players(player: Optional[str] = None, db: AsyncSession = Depends(get_session)):
+    """
+    Возвращает список пользователей в системе или одного пользователя по uuid
+    :param player:
+    :param db:
+    :return:
+    """
     stmt = select(Player).where(Player.is_playing == False)
 
     if player is not None:
